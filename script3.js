@@ -82,7 +82,10 @@ setTimeout(() => {
             } else {
                 clearInterval(interval)
                 textElement.style.opacity = "1"; // Появление
-                textElement.textContent = 'Причины бесконечны, но важнее всего то, что я просто люблю тебя, с 14 февраля!!! ❤️❤️❤️'
+                textElement.textContent = 'Причины бесконечны, но важнее всего то, что я просто люблю тебя, с 14 февраля!!!'
+                setTimeout(() => {
+                    document.location = 'index4.html'
+                }, 3000)
             }
         }, 2000);
     }, 150); // Меняем текст каждые 
