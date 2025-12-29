@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css">
+    <audio src="music.mp3" preload="auto" autoplay loop>    <p>If you are reading this, it is because your browser does not support the audio element.     </p></audio>
+</head>
+<body>
+    </audio>
+    <div id="christmas-tree" class="christmas-tree">
+  <div class="tree">
+    <div class="tree-details"></div>
+  </div>
+  <div class="lights">
+    <div class="row-one"></div>
+    <div class="row-two"></div>
+  </div>
+  <div class="balls"></div>
+  <div class="star"></div>
+  <div class="shadow"></div>
+  </div>
+    <div class="text-content">
+    <h1>С наступающим новым годом <span> солнышко !!!</h1>
+    <p>Лааааст кристмас ай гав ю май харт, бат зе вери некст дей ю гав ит авэй, тзис ейар</p>
+
+</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+    // Создание снежинок
+    function createSnowflake() {
+        const snowflake = document.createElement('div');
+        snowflake.classList.add('snowflake');
+        snowflake.textContent = '❅'; // Символ снежинки
+        snowflake.style.left = Math.random() * 100 + 'vw'; // Случайное положение по горизонтали
+        snowflake.style.opacity = Math.random(); // Случайная прозрачность
+        snowflake.style.fontSize = (Math.random() * 1.5 + 0.5) + 'em'; // Случайный размер
+
+        // Длительность падения
+        const animationDuration = Math.random() * 5 + 5;
+        snowflake.style.animationDuration = animationDuration + 's';
+
+        document.body.appendChild(snowflake);
+
+        // Удаляем снежинку после завершения анимации
+        setTimeout(() => {
+            snowflake.remove();
+        }, animationDuration * 1000);
+    }
+
+    // Генерация снежинок каждые 300–700 мс
+    setInterval(createSnowflake, Math.random() * 300 + 200);
+</script>
+</body>
+</html>
