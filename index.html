@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2 года вместе</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+  <!-- Hero секция с typewriter -->
+  <section class="section hero dark">
+    <h1 id="typewriter"></h1>
+  </section>
+
+  <section class="section reveal dark">
+    <div id="time-counter">
+      <p id="years"></p>
+      <p id="months"></p>
+      <p id="days"></p>
+      <p id="hours"></p>
+      <p id="minutes"></p>
+      <p id="seconds"></p>
+    </div>
+    <p>счастья рядом с тобой</p>
+  </section>
+
+  <section class="section reveal dark abstract-text">
+    <div class="abstract-line">
+      <span class="icon">🫂</span>
+      <p>Первая встреча</p>
+    </div>
+    <div class="abstract-line">
+      <span class="icon">😊</span>
+      <p>Первый смех</p>
+    </div>
+    <div class="abstract-line">
+      <span class="icon">💌</span>
+      <p>Первое «останься»</p>
+    </div>
+  </section>
+
+  <!-- Карусель 9:16 -->
+  <section class="section reveal dark carousel-section">
+    <div class="carousel" id="carousel">
+      <div class="carousel-track" id="carouselTrack">
+        <!-- Фото добавляются JS -->
+      </div>
+    </div>
+    <!-- Минималистичный текст поверх фото -->
+    <div class="carousel-text">
+      <p>Каждый момент с тобой — бесценен</p>
+    </div>
+  </section>
+
+  <!-- Финальная секция -->
+  <section class="section reveal light final">
+    <h2>Я люблю тебя</h2>
+    <p>Сегодня. Завтра. И всегда.</p>
+    <span>С годовщиной! 2 года</span>
+    <button id="view-maps"><a href="maps.html">Карта наших мест</a></button>
+    <button id="restart-film">Смотреть снова 🎬</button>
+  </section>
+
+  <!-- ====================== JS ====================== -->
+  <script>
+    /* ======================
+       TYPEWRITER
+    ====================== */
+    const text = 'Все началось 2 года назад';
+    const speed = 90;
+    const target = document.getElementById('typewriter');
+    let index = 0;
+
+    document.body.classList.add('no-scroll');
+
+    function type() {
+      if (index < text.length) {
+        target.textContent += text.charAt(index);
+        index++;
+        setTimeout(type, speed);
+      } else {
+        setTimeout(startFilm, 1200); // запускаем автоскролл
+      }
+    }
+
+    setTimeout(type, 600);
+
+    /* ======================
+       REVEAL + BACKGROUND
+    ====================== */
+    const sections = document.querySelectorAll('.section');
+
+    sections.forEach((section, i) => {
+      section.dataset.move = true;
+      section.style.setProperty('--move-y', `${Math.random() * 20 - 10}px`);
+      section.style.setProperty('--move-x', `${Math.random() * 20 - 10}px`);
+    });
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+
+          if (entry.target.classList.contains('dark')) {
+            document.body.style.backgroundColor = '#0f0f0f';
+            document.body.style.color = '#f5f5f5';
+          }
+          if (entry.target.classList.contains('light')) {
+            document.body.style.backgroundColor = '#ffffff';
+            document.body.style.color = '#0f0f0f';
+          }
+        }
+      });
+    }, { threshold: 0.4 });
+
+    sections.forEach(section => observer.observe(section));
+
+    /* ======================
+       AUTO SCROLL (FILM)
+    ====================== */
+    function startFilm() {
+      scrollToScene(1);
+    }
+
+    function scrollToScene(index) {
+      if (index >= sections.length) {
+        document.body.classList.remove('no-scroll');
+        return;
+      }
+
+      sections[index].scrollIntoView({ behavior: 'smooth' });
+
+      let delay = 7500;
+      if (sections[index].classList.contains('carousel-section')) delay = 13000;
+
+      setTimeout(() => scrollToScene(index + 1), delay);
+    }
+
+    window.addEventListener('wheel', () => {
+      document.body.classList.remove('no-scroll');
+    });
+
+    /* ======================
+       CAROUSEL 9:16
+    ====================== */
+    const carouselTrack = document.getElementById('carouselTrack');
+    const carouselContainer = document.getElementById('carousel');
+    const totalPhotos = 59;
+
+    // добавляем фото динамически
+    for (let i = 1; i <= totalPhotos; i++) {
+      const img = document.createElement('img');
+      img.src = `images/photo${i}.jpg`;
+      img.alt = `Photo ${i}`;
+      img.loading = 'lazy';
+      carouselTrack.appendChild(img);
+    }
+
+    let currentSlide = 0;
+    let carouselInterval;
+
+    function nextSlide() {
+      currentSlide++;
+
+      if (currentSlide >= totalPhotos) {
+        clearInterval(carouselInterval);
+        goToNextScene(); // переход к следующей сцене
+        return;
+      }
+
+      const offset = carouselContainer.clientWidth * currentSlide;
+      carouselTrack.style.transform = `translateX(-${offset}px)`;
+    }
+
+    function goToNextScene() {
+      const currentIndex = Array.from(sections).findIndex(s => s.classList.contains('carousel-section'));
+      const nextIndex = currentIndex + 1;
+
+      if (nextIndex < sections.length) {
+        sections[nextIndex].scrollIntoView({ behavior: 'smooth' });
+      } else {
+        document.body.classList.remove('no-scroll');
+      }
+    }
+
+    // запускаем карусель только когда видима
+    const carouselObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          carouselInterval = setInterval(nextSlide, 200);
+        } else {
+          clearInterval(carouselInterval);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    carouselObserver.observe(carouselContainer);
+
+    /* ======================
+      DETAILED TIME COUNTER
+    ====================== */
+    function updateTimeCounter() {
+      const startDate = new Date('2024-01-14T00:00:00');
+      const now = new Date();
+
+      let diff = now - startDate;
+      const totalSeconds = Math.floor(diff / 1000);
+      const totalMinutes = Math.floor(totalSeconds / 60);
+      const totalHours = Math.floor(totalMinutes / 60);
+      const totalDays = Math.floor(totalHours / 24);
+
+      let years = now.getFullYear() - startDate.getFullYear();
+      let months = now.getMonth() - startDate.getMonth();
+      if (months < 0) {
+        years--;
+        months += 12;
+      }
+
+      const days = totalDays;
+      const hours = totalHours % 24;
+      const minutes = totalMinutes % 60;
+      const seconds = totalSeconds % 60;
+
+      // Обновляем DOM с анимацией
+      const mapping = {
+        'years': `${years} ${getWord(years, ['год','года','лет'])}`,
+        'months': `${months} ${getWord(months, ['месяц','месяца','месяцев'])}`,
+        'days': `${days} ${getWord(days, ['день','дня','дней'])}`,
+        'hours': `${hours} ${getWord(hours, ['час','часа','часов'])}`,
+        'minutes': `${minutes} ${getWord(minutes, ['минута','минуты','минут'])}`,
+        'seconds': `${seconds} ${getWord(seconds, ['секунда','секунды','секунд'])}`
+      };
+
+      for (let id in mapping) {
+        const el = document.getElementById(id);
+        el.textContent = mapping[id];
+        // добавляем эффект обновления
+        el.classList.remove('updated');
+        void el.offsetWidth; // перезапуск анимации
+        el.classList.add('updated');
+      }
+    }
+
+    function getWord(number, words) {
+      number = Math.abs(number) % 100;
+      const n1 = number % 10;
+      if (number > 10 && number < 20) return words[2];
+      if (n1 > 1 && n1 < 5) return words[1];
+      if (n1 == 1) return words[0];
+      return words[2];
+    }
+
+    updateTimeCounter();
+    setInterval(updateTimeCounter, 1000);
+
+
+  document.getElementById('restart-film').addEventListener('click', () => {
+    document.body.classList.add('no-scroll');
+    scrollToScene(0); // запускаем фильм с начала
+  });
+
+  const abstractLines = document.querySelectorAll('.abstract-text .abstract-line');
+
+  // появление с небольшой задержкой между линиями
+  abstractLines.forEach((line, i) => {
+    setTimeout(() => line.classList.add('active'), i * 1200);
+  });
+
+  </script>
+
+</body>
+</html>

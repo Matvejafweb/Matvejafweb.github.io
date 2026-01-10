@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Карта наших воспоминаний</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+  <!-- Твой стиль -->
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23ffffff' stroke-width='1.5' d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E") 12 12, auto;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0f0f0f;
+      color: #f5f5f5;
+      font-family: 'Montserrat', sans-serif;
+    }
+    .header {
+      text-align: center;
+      padding: 40px 20px;
+      font-size: 2rem;
+    }
+    .header p {
+      font-size: 1.2rem;
+      opacity: 0.7;
+      max-width: 600px;
+      margin: 10px auto 0;
+    }
+    .footer {
+      text-align: center;
+      padding: 40px 20px;
+      font-size: 2rem;
+    }
+    .footer p {
+      font-size: 1.2rem;
+      opacity: 0.7;
+      max-width: 600px;
+      margin: 10px auto 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Наши места</h1>
+    <p>Каждая точка — момент, который мы создали <span style="color: #e2a7fff5;">вместе</span></p>
+    <p>Хочу и дальше ее расширять <span style="color: #e2a7fff5;">вместе с тобой</span></p>
+    <p>(тыкай на сердечки и там будут всплывать наши фоточки!!!)</p>
+  </div>
+
+  <div id="map"></div>
+  <div class="footer">
+    <p>Ну все места я передать тут не могу с фоточками нашими, но это самое основые, <span style="color: #e2a7fff5;">люблю тебя</span></p>
+    <button id="go-to-main"><a href="index.html">На главную</a></button>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <script>
+    // Инициализация карты
+    const map = L.map('map').setView([51.546028, 46.015028], 3); // начальный центр — Москва (пример)
+
+    // Подложка карты (в тёмной теме)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: 'Флаг не я добавил, это сервис его туда засунул, извини'
+    }).addTo(map);
+
+    // Стиль для иконок
+    const heartIcon = L.divIcon({
+      className: 'love-marker',
+      html: '❤️',
+      iconSize: [30, 30],
+      iconAnchor: [15, 30]
+    });
+
+    // Ваши воспоминания
+    const memories = [
+      {
+        lat: 51.589111, // Пример: Москва, Красная площадь
+        lng: 45.929917,
+        title: 'Первая встреча',
+        description: 'Наша первая встреча вроде как на новой)',
+        image: 'images/photo_2025-08-25_23-29-32.jpg' // путь к твоему фото
+      },
+      {
+        lat: 51.591592, // Пример: Москва, Красная площадь
+        lng: 45.927285,
+        title: 'Квартирки',
+        description: 'Наши с тобой квартирки тут, но больше внимания естественно на твою)',
+        image: 'images/photo11.jpg' // путь к твоему фото
+      },
+      {
+        lat: 51.591060, // Пример: Москва, Красная площадь
+        lng: 45.930212,
+        title: 'Школа',
+        description: 'Наша с тобой школа, тоже немало моментов с ней связано',
+      },
+      {
+        lat: 51.592021, // Пример: Москва, Красная площадь
+        lng: 45.925426,
+        title: 'Магнит',
+        description: 'Магнит в который мы с тобой ходим каждую пятницу',
+        image: 'images/photo_2026-01-10_03-33-49.jpg' // путь к твоему фото
+      },
+      {
+        lat: 51.583443, // Пример: Москва, Красная площадь
+        lng: 45.881561,
+        title: 'Твой дом',
+        description: 'Твой домик в полевановке',
+        image: 'images/photo38.jpg' // путь к твоему фото
+      },
+      {
+        lat: 51.576044, // Пример: Москва, Красная площадь
+        lng: 45.972515,
+        title: 'Тау',
+        description: 'Здесь гуляем и ходим в кино)',
+        image: 'images/photo_2025-08-25_22-46-29.jpg' // путь к твоему фото
+      },
+      {
+        lat: 51.550692, // Пример: Москва, Красная площадь
+        lng: 46.073459,
+        title: 'Garden Hills',
+        description: 'Обожаю эти моменты, когда мы ездили на затон',
+        image: 'images/photo28.jpg' // путь к твоему фото
+      },
+      {
+        lat: 51.461516, // Пример: Москва, Красная площадь
+        lng: 46.038670,
+        title: 'Тур база',
+        description: 'Если не ошибаюсь, сюда ездили с тобой и моими родителями, было афигенно',
+        image: 'images/photo15.jpg' // путь к твоему фото
+      },
+      {
+        lat: 51.525057, // Пример: Москва, Красная площадь
+        lng: 46.049600,
+        title: 'Набережая',
+        description: 'Ну как же без набережной',
+        image: 'images/photo56.jpg' // путь к твоему фото
+      },
+      {
+        lat: 51.604877, // Пример: Москва, Красная площадь
+        lng: 45.970306,
+        title: 'К бабушке',
+        description: 'Как к бабушке моей ездили и тебе было всегда неловко там ахахахахах',
+      },
+      {
+        lat: 51.581026, // Пример: Москва, Красная площадь
+        lng: 45.936631,
+        title: 'Лес',
+        description: 'В лес с тобой гулять ходили, тоже афигенное время я считаю',
+        image: 'images/photo_2026-01-10_03-43-02.jpg' // путь к твоему фото
+      },
+      {
+        lat: 51.590650, // Пример: Москва, Красная площадь
+        lng: 45.928309,
+        title: 'Дом Виктории',
+        description: 'Сразу вспоминаю эту фотку вахахахха',
+        image: 'images/photo_2025-07-28_00-14-40.jpg' // путь к твоему фото
+      },
+      {
+        lat: 51.590716, // Пример: Москва, Красная площадь
+        lng: 45.926328,
+        title: 'Синяя лестница',
+        description: 'Просто легенда, правда от нее сейчас уже ничего не осталось',
+        image: 'images/photo42.jpg' // путь к твоему фото
+      },
+      {
+        lat: 51.591786, // Пример: Москва, Красная площадь
+        lng: 45.925178,
+        title: 'Наша',
+        description: 'Ну та, которая за магнитом (тоже легенда)',
+        image: 'images/photo_2025-10-13_22-18-04.jpg' // путь к твоему фото
+      },
+      {
+        lat: 51.586000, // Пример: Москва, Красная площадь
+        lng: 45.968221,
+        title: 'Шаурмааа',
+        description: 'Шаурму тут тебе вкусную покупаю!!!',
+        image: 'images/maxresdefault.jpg' // путь к твоему фото
+      },
+      {
+        lat: 51.591070, // Пример: Москва, Красная площадь
+        lng: 45.927258,
+        title: 'Наше КБ',
+        description: 'Туда часто бегаю нам за вкусняшками и не только))',
+        image: 'images/photo_2025-08-25_23-26-14.jpg' // путь к твоему фото
+      },
+
+      // Добавляй новые объекты по аналогии
+    ];
+
+    // Добавляем каждую метку
+    memories.forEach(mem => {
+      const popupContent = `
+        <div class="popup-content" style="
+          width: 220px;
+          font-family: 'Montserrat', sans-serif;
+          color: #0f0f0f;
+          padding: 10px;
+          border-radius: 10px;
+          background: #ffffff;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        ">
+          <strong style="font-size: 1.1em; color: #262626;">${mem.title}</strong>
+          <p style="margin: 8px 0; font-size: 0.9em; color: #555;"></p>
+          <img src="${mem.image}" alt="${mem.title}"
+               style="width: 100%; border-radius: 8px; margin: 8px 0; height: 200px; object-fit: cover;">
+          <p style="margin: 8px 0; font-size: 0.95em;">${mem.description}</p>
+        </div>
+      `;
+
+      L.marker([mem.lat, mem.lng], { icon: heartIcon })
+        .addTo(map)
+        .bindPopup(popupContent);
+    });
+  </script>
+
+</body>
+</html>
